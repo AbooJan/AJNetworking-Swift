@@ -5,9 +5,8 @@ source 'https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git'
 
 target 'AJNetworking-Swift' do
 
-  pod 'Alamofire', '~> 4.4.0'
-  pod 'EVReflection', '~> 4.8.3'
-  pod 'EVReflection/Alamofire', '~> 4.8.3'
+  pod 'Alamofire', '4.4.0'
+  pod 'HandyJSON', '1.7.1'
   
 
   target 'AJNetworking-SwiftTests' do

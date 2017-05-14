@@ -1,5 +1,5 @@
 # AJNetworking-Swift
-A Network Framework basic on Alamofire and EVReflection.
+A Network Framework basic on Alamofire and HandyJSON.
 Swift version is `3.1`.
 
 ---
@@ -41,11 +41,11 @@ AJRequest<TestRequest, AJBaseCommonResponseBean<LoginResponseBean>>.sendRequest(
 
 * `AJRequestBody`  is a protocal, it contains network request  params define . Parameter `apiPath` and `params` must be implemented, rest has default implementation.
 
-* `AJBaseResponseBean` is a basic json serialize class, it also contain two sub basic class `AJBaseCommonResponseBean` and `AJBaseListResponseBean`. They has one generic parameter must inherit class `AJBaseBean`. They are all inherit class `EVNetworkingObject`.
+* `AJBaseResponseBean` is a basic json serialize class, it also contain two sub basic class `AJBaseCommonResponseBean` and `AJBaseListResponseBean`. They has one generic parameter must inherit class `AJBaseBean`. They are all inherit protocol `HandyJSON`.
 
 ---
 ## Thanks
 
 * [Alamofire](https://github.com/Alamofire/Alamofire) 
-* [EVReflection](https://github.com/evermeer/EVReflection)    
+* [HandyJSON](https://github.com/alibaba/HandyJSON)    
 

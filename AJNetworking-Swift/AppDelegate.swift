@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         let config = AJNetworkConfig.shareInstance;
-        config.host = "192.168.0.106:3000";
+        config.host = "192.168.0.102:3000";
         
         
         return true

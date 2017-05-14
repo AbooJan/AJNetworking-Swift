@@ -31,7 +31,7 @@ extension TestRequest:AJRequestBody {
             return ["account":account, "pw":pw];
             
         case .news(let id, let time):
-            return ["userID":id, "dateTime":time];
+            return ["userId":id, "dateTime":time];
             
         }
     }

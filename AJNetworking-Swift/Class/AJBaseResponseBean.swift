@@ -7,58 +7,27 @@
 //
 
 import Foundation
-import EVReflection
+import HandyJSON
 
-
-open class AJBaseResponseBean:EVNetworkingObject {
+open class AJBaseResponseBean:NSObject,HandyJSON {
     public var code:String = "0";
     public var msg:String = "";
+    
+    public required override init() {}
 }
 
-open class AJBaseBean:EVNetworkingObject {
-    //
+open class AJBaseBean:NSObject,HandyJSON {
+    public required override init() {}
 }
 
 
 // MARK: -
 open class AJBaseListResponseBean<T:AJBaseBean>:AJBaseResponseBean {
     public var data:Array<T> = Array();
-    
-    override open func setValue(_ value: Any!, forUndefinedKey key: String) {
-        if key == "data" {
-            data = value as! Array<T>;
-        }
-    }
-    
-    internal func setGenericValue(_ value: AnyObject!, forUndefinedKey key: String) {
-        if(key == "data") {
-            data = value as! Array<T>;
-        }
-    }
-    
-    internal func getGenericType() -> NSObject {
-        return T() as NSObject
-    }
 }
 
 
 // MARK: -
 open class AJBaseCommonResponseBean<T:AJBaseBean>:AJBaseResponseBean {
     public var data:T?
-    
-    override open func setValue(_ value: Any!, forUndefinedKey key: String) {
-        if key == "data" {
-            data = value as? T;
-        }
-    }
-    
-    internal func setGenericValue(_ value: AnyObject!, forUndefinedKey key: String) {
-        if(key == "data") {
-            data = value as? T
-        }
-    }
-    
-    internal func getGenericType() -> NSObject {
-        return T() as NSObject
-    }
 }

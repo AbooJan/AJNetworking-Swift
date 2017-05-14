@@ -8,8 +8,6 @@
 
 import UIKit
 import Alamofire
-import EVReflection
-
 
 // MARK: -
 
@@ -54,47 +52,49 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
         }
         
         
-        Alamofire.request(requestPath, method: method, parameters: requestbody.params, encoding: encoding, headers: requestbody.headers).responseObject { (response:DataResponse<E>) in
-            
-            // dismiss hub
-            if requestbody.hub != nil {
-                AJNetworkConfig.shareInstance.hubHanlder?.dismissHub();
-            }
-            
-            switch response.result {
-            case .success(let model):
-                if requestbody.isSuccess(model.code) {
-                    callback(model, nil);
-                    
-                }else{
-                    callback(model, AJError(code: Int(model.code)!, msg: model.msg));
+        Alamofire.request(requestPath, method: method, parameters: requestbody.params, encoding: encoding, headers: requestbody.headers).responseString { (response:DataResponse<String>) in
+                
+                // dismiss hub
+                if requestbody.hub != nil {
+                    AJNetworkConfig.shareInstance.hubHanlder?.dismissHub();
                 }
-                
-            case .failure(let err):
-                let nsErr = err as NSError;
-                
-                let errInfo = nsErr.userInfo;
-                let ajErr = AJError(code: nsErr.code, msg: errInfo["NSLocalizedDescription"] as? String );
-                callback(nil, ajErr);
-
-            }
-            
-            // Log
-            }.responseString { (response:DataResponse<String>) in
             
                 switch response.result {
                 case .success(let jsonStr):
+                    //Log
                     print("\n###### RESPONSE ######");
                     print("#SOURCE#: \(requestPath)")
                     print("# JSON #: \(jsonStr)");
                     print("############\n\n");
                     
+                    //callback
+                    if let model = E.deserialize(from: jsonStr) {
+                        
+                        if requestbody.isSuccess(model.code) {
+                            callback(model, nil);
+                            
+                        }else{
+                            callback(model, AJError(code: Int(model.code)!, msg: model.msg));
+                        }
+                        
+                    }else{
+                        let ajErr = AJError(code: -9090, msg: "json deserialize to model fail" );
+                        callback(nil, ajErr);
+                    }
+                    
                 case .failure(let err):
+                    //Log
                     let errDesc: Result<String> = .failure(err)
                     print("\n‼️‼️‼️ ERROR ‼️‼️‼️");
                     print("#error#: \(errDesc)");
                     print("‼️‼️‼️‼️‼️‼️\n\n");
                 
+                    //callback 
+                    let nsErr = err as NSError;
+                    
+                    let errInfo = nsErr.userInfo;
+                    let ajErr = AJError(code: nsErr.code, msg: errInfo["NSLocalizedDescription"] as? String );
+                    callback(nil, ajErr);
                 }
                 
         }
