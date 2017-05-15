@@ -44,4 +44,8 @@ extension TestRequest:AJRequestBody {
         
         return false;
     }
+    
+    var timeout:TimeInterval {
+        return 10.0;
+    }
 }

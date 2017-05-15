@@ -52,7 +52,13 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
         }
         
         
-        Alamofire.request(requestPath, method: method, parameters: requestbody.params, encoding: encoding, headers: requestbody.headers).responseString { (response:DataResponse<String>) in
+        //timeout
+        let config = URLSessionConfiguration.default;
+        config.timeoutIntervalForRequest = requestbody.timeout;
+        
+        let manager = SessionManager(configuration: config);
+        
+        let _ = manager.request(requestPath, method: method, parameters: requestbody.params, encoding: encoding, headers: requestbody.headers).responseString { (response:DataResponse<String>) in
                 
                 // dismiss hub
                 if requestbody.hub != nil {
