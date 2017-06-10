@@ -7,10 +7,16 @@
 //
 
 import Foundation
+import Alamofire
 
+//MARK: -
+public struct FormData {
+    var data:Data;
+    var name:String;
+    var mimeType:String? = nil;
+}
 
 // MARK: - Enum
-
 public enum HttpMethod:String {
     case get     = "GET"
     case post    = "POST"
@@ -29,7 +35,6 @@ public enum HttpRequestSerialization {
     /// Content-Type:application/x-plist
     case propertyList
 }
-
 
 // MARK: - AJRequestBody
 
@@ -58,6 +63,9 @@ public protocol AJRequestBody {
     
     /// network request serialization type, default is form
     var serializationType:HttpRequestSerialization {get};
+    
+    /// multipart form data request
+    var multipartFormData:[FormData]? {get};
     
     /// the progress tips show when network request start, nil will not show
     var hub:String? {get};
@@ -94,6 +102,10 @@ extension AJRequestBody {
     
     var serializationType:HttpRequestSerialization {
         return .form;
+    }
+    
+    var multipartFormData:[FormData]? {
+        return nil;
     }
     
     var hub:String? {
