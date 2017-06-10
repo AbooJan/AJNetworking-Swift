@@ -72,8 +72,12 @@ extension MultipartTestRequest:AJRequestBody {
         switch self {
         case .uploadAvatar(let avatar):
             
-            let form:FormData = FormData(data: UIImagePNGRepresentation(avatar)!, name: "avatar", mimeType:"image/png");
-            return [form];
+            let formData:FormData = FormData(data: UIImageJPEGRepresentation(avatar, 0.6)!, name: "avatar", mimeType:"image/jpeg");
+            
+            let data:Data = "18090939282".data(using: .utf8)!;
+            let param:FormData = FormData(data: data, name: "phone", mimeType: nil);
+            
+            return [formData, param];
         }
     }
     

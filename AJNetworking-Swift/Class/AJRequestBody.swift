@@ -13,13 +13,16 @@ import Alamofire
 public struct FormData {
     var data:Data;
     var name:String;
-    var mimeType:String;
+    
+    ///noly file need mime type
+    var mimeType:String?;
     
     func fileName() -> String {
-        let tmp = mimeType.components(separatedBy: "/");
-        if tmp.count == 2 {
-            if let fileType = tmp.last {
-                return name+".\(fileType)";
+        if let tmp = mimeType?.components(separatedBy: "/") {
+            if tmp.count == 2 {
+                if let fileType = tmp.last {
+                    return name+".\(fileType)";
+                }
             }
         }
         

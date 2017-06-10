@@ -109,7 +109,12 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
                 
                 // append form data
                 for form in multipart {
-                    formData.append(form.data, withName: form.name, fileName: form.fileName(), mimeType: form.mimeType);
+                    
+                    if let mimeType = form.mimeType {
+                        formData.append(form.data, withName: form.name, fileName: form.fileName(), mimeType: mimeType);
+                    }else{
+                        formData.append(form.data, withName: form.name);
+                    }
                 }
         
             }, to: requestPath, method: method, headers: requestbody.headers, encodingCompletion: { (result:SessionManager.MultipartFormDataEncodingResult) in
