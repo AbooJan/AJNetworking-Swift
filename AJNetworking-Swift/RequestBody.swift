@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import UIKit
+import Alamofire
 
 enum TestRequest {
     case login(account:String, pw:String)
@@ -47,5 +49,51 @@ extension TestRequest:AJRequestBody {
     
     var timeout:TimeInterval {
         return 10.0;
+    }
+}
+
+//MARK:---
+enum MultipartTestRequest {
+    case uploadAvatar(avatar:UIImage)
+}
+
+extension MultipartTestRequest:AJRequestBody {
+    
+    var apiPath:String {
+        return "test/uploadAvatar"
+    }
+    
+    var params:[String:Any]? {
+        return [:];
+    }
+ 
+    var multipartFormData:[FormData]? {
+        
+        switch self {
+        case .uploadAvatar(let avatar):
+            
+            let form:FormData = FormData(data: UIImagePNGRepresentation(avatar)!, name: "avatar", mimeType:"image/png");
+            return [form];
+        }
+    }
+    
+    var method:HttpMethod {
+        return .post;
+    }
+    
+    var headers:[String:String]? {
+        return ["Content-Type":"multipart/form-data"];
+    }
+    
+    func isSuccess(_ code: String) -> Bool {
+        if code == "111" {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    var timeout:TimeInterval {
+        return 20.0;
     }
 }

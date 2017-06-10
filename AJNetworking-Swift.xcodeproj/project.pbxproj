@@ -216,7 +216,8 @@
 				TargetAttributes = {
 					CC51E3901E860AA6001A7BF0 = {
 						CreatedOnToolsVersion = 8.2;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = C7492S8NPE;
+						ProvisioningStyle = Manual;
 					};
 					CC51E3A41E860AA6001A7BF0 = {
 						CreatedOnToolsVersion = 8.2;
@@ -509,11 +510,14 @@
 			baseConfigurationReference = 0BB3265BA5AB0BF9194A7DF4 /* Pods-AJNetworking-Swift.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = C7492S8NPE;
 				INFOPLIST_FILE = "AJNetworking-Swift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.aboo.AJNetworking-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "1db0d999-4770-4929-87f3-a58afd7bbe08";
+				PROVISIONING_PROFILE_SPECIFIER = common_dev_profile;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -523,11 +527,13 @@
 			baseConfigurationReference = CDA781061E291D7671F8E7D3 /* Pods-AJNetworking-Swift.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "AJNetworking-Swift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.aboo.AJNetworking-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

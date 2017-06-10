@@ -55,56 +55,105 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
         //timeout
         let config = URLSessionConfiguration.default;
         config.timeoutIntervalForRequest = requestbody.timeout;
+        config.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
         
         let manager = SessionManager(configuration: config);
         
-        let _ = manager.request(requestPath, method: method, parameters: requestbody.params, encoding: encoding, headers: requestbody.headers).responseString { (response:DataResponse<String>) in
+        
+        
+        // handle failure closure
+        let handleFailure = { (err:Error) in
+            
+            //callback
+            let nsErr = err as NSError;
+            
+            let errInfo = nsErr.userInfo;
+            let ajErr = AJError(code: nsErr.code, msg: errInfo["NSLocalizedDescription"] as? String );
+            
+            //Log
+            print("\n‼️‼️‼️ ERROR ‼️‼️‼️");
+            print("#error#: \(errInfo)");
+            print("‼️‼️‼️‼️‼️‼️\n\n");
+            
+            callback(nil, ajErr);
+        }
+        
+        // handle success closure
+        let handleSuccess = { (jsonStr:String) in
+            //Log
+            print("\n###### RESPONSE ######");
+            print("#SOURCE#: \(requestPath)")
+            print("# JSON #: \(jsonStr)");
+            print("############\n\n");
+            
+            //callback
+            if let model = E.deserialize(from: jsonStr) {
+                
+                if requestbody.isSuccess(model.code) {
+                    callback(model, nil);
+                    
+                }else{
+                    callback(model, AJError(code: Int(model.code)!, msg: model.msg));
+                }
+                
+            }else{
+                let ajErr = AJError(code: -9090, msg: "json deserialize to model fail" );
+                callback(nil, ajErr);
+            }
+        }
+        
+        
+        if let multipart = requestbody.multipartFormData {
+            
+            Alamofire.upload(multipartFormData: { (formData) in
+                
+                // append form data
+                for form in multipart {
+                    formData.append(form.data, withName: form.name, fileName: form.fileName(), mimeType: form.mimeType);
+                }
+        
+            }, to: requestPath, method: method, headers: requestbody.headers, encodingCompletion: { (result:SessionManager.MultipartFormDataEncodingResult) in
                 
                 // dismiss hub
                 if requestbody.hub != nil {
                     AJNetworkConfig.shareInstance.hubHanlder?.dismissHub();
                 }
-            
-                switch response.result {
-                case .success(let jsonStr):
-                    //Log
-                    print("\n###### RESPONSE ######");
-                    print("#SOURCE#: \(requestPath)")
-                    print("# JSON #: \(jsonStr)");
-                    print("############\n\n");
-                    
-                    //callback
-                    if let model = E.deserialize(from: jsonStr) {
-                        
-                        if requestbody.isSuccess(model.code) {
-                            callback(model, nil);
+
+                switch result {
+                case .success(let request, _, _):
+                    request.responseString(completionHandler: { (res:DataResponse<String>) in
+                        switch res.result {
+                        case .success(let jsonStr):
+                            handleSuccess(jsonStr);
                             
-                        }else{
-                            callback(model, AJError(code: Int(model.code)!, msg: model.msg));
+                        case .failure(let err):
+                            handleFailure(err);
                         }
-                        
-                    }else{
-                        let ajErr = AJError(code: -9090, msg: "json deserialize to model fail" );
-                        callback(nil, ajErr);
-                    }
+                    })
                     
                 case .failure(let err):
-                    //Log
-                    let errDesc: Result<String> = .failure(err)
-                    print("\n‼️‼️‼️ ERROR ‼️‼️‼️");
-                    print("#error#: \(errDesc)");
-                    print("‼️‼️‼️‼️‼️‼️\n\n");
+                    handleFailure(err);
+                }
+            });
+            
+        }else{
+            
+            let _ = manager.request(requestPath, method: method, parameters: requestbody.params, encoding: encoding, headers: requestbody.headers).responseString { (response:DataResponse<String>) in
                 
-                    //callback 
-                    let nsErr = err as NSError;
-                    
-                    let errInfo = nsErr.userInfo;
-                    let ajErr = AJError(code: nsErr.code, msg: errInfo["NSLocalizedDescription"] as? String );
-                    callback(nil, ajErr);
+                // dismiss hub
+                if requestbody.hub != nil {
+                    AJNetworkConfig.shareInstance.hubHanlder?.dismissHub();
                 }
                 
+                switch response.result {
+                case .success(let jsonStr):
+                    handleSuccess(jsonStr);
+                    
+                case .failure(let err):
+                    handleFailure(err);
+                }
+            }
         }
-        
     }
     
     

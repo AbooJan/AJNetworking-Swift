@@ -14,6 +14,14 @@ open class AJBaseResponseBean:NSObject,HandyJSON {
     public var msg:String = "";
     
     public required override init() {}
+    
+    public func mapping(mapper: HelpingMapper) {
+        mapper <<<
+            self.code <-- "Code"
+        
+        mapper <<<
+            self.msg <-- "Msg"
+    }
 }
 
 open class AJBaseBean:NSObject,HandyJSON {
