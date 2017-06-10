@@ -43,6 +43,27 @@ AJRequest<TestRequest, AJBaseCommonResponseBean<LoginResponseBean>>.sendRequest(
 
 * `AJBaseResponseBean` is a basic json serialize class, it also contain two sub basic class `AJBaseCommonResponseBean` and `AJBaseListResponseBean`. They has one generic parameter must inherit class `AJBaseBean`. They are all inherit protocol `HandyJSON`.
 
+
+### Multipart Request
+inherit protocol `AJRequestBody` , and turn `multipartFormData`, here is example:
+```
+    var multipartFormData:[FormData]? {
+        
+        switch self {
+        case .uploadAvatar(let avatar):
+            
+            // if you upload file, you need to send mimeType
+            let formData:FormData = FormData(data: UIImageJPEGRepresentation(avatar, 0.6)!, name: "avatar", mimeType:"image/jpeg");
+            
+            // if you need post other params, can use utf8 ecoding data
+            let data:Data = "18090939282".data(using: .utf8)!;
+            let param:FormData = FormData(data: data, name: "phone", mimeType: nil);
+            
+            return [formData, param];
+        }
+    }
+```
+
 ---
 ## Thanks
 
