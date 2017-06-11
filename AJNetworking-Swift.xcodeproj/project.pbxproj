@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7F7AA889E561ECB8542D0E5D /* Pods_AJNetworking_SwiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A7492A83C67BC1DFA32B974 /* Pods_AJNetworking_SwiftTests.framework */; };
 		CC416E821EED24C300A8F270 /* AJFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC416E811EED24C300A8F270 /* AJFormData.swift */; };
+		CC416E841EED4CB500A8F270 /* logo.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = CC416E831EED4CB500A8F270 /* logo.jpeg */; };
 		CC51E3951E860AA6001A7BF0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC51E3941E860AA6001A7BF0 /* AppDelegate.swift */; };
 		CC51E3971E860AA6001A7BF0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC51E3961E860AA6001A7BF0 /* ViewController.swift */; };
 		CC51E39A1E860AA6001A7BF0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CC51E3981E860AA6001A7BF0 /* Main.storyboard */; };
@@ -43,6 +44,7 @@
 		50007016D303BF51B783D5C3 /* Pods_AJNetworking_Swift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AJNetworking_Swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DDE4AE652658A007432A201 /* Pods-AJNetworking-SwiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AJNetworking-SwiftTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AJNetworking-SwiftTests/Pods-AJNetworking-SwiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		CC416E811EED24C300A8F270 /* AJFormData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AJFormData.swift; sourceTree = "<group>"; };
+		CC416E831EED4CB500A8F270 /* logo.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = logo.jpeg; sourceTree = "<group>"; };
 		CC51E3911E860AA6001A7BF0 /* AJNetworking-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AJNetworking-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC51E3941E860AA6001A7BF0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CC51E3961E860AA6001A7BF0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				CC51E3941E860AA6001A7BF0 /* AppDelegate.swift */,
 				CC51E3961E860AA6001A7BF0 /* ViewController.swift */,
 				CCACCC0D1EB6DCE8005357B1 /* RequestBody.swift */,
+				CC416E831EED4CB500A8F270 /* logo.jpeg */,
 				CC51E3981E860AA6001A7BF0 /* Main.storyboard */,
 				CC51E39B1E860AA6001A7BF0 /* Assets.xcassets */,
 				CC51E39D1E860AA6001A7BF0 /* LaunchScreen.storyboard */,
@@ -255,6 +258,7 @@
 			files = (
 				CC51E39F1E860AA6001A7BF0 /* LaunchScreen.storyboard in Resources */,
 				CC51E39C1E860AA6001A7BF0 /* Assets.xcassets in Resources */,
+				CC416E841EED4CB500A8F270 /* logo.jpeg in Resources */,
 				CC51E39A1E860AA6001A7BF0 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

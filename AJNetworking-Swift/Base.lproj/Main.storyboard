@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.17" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -22,23 +22,103 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RjO-a3-I4v">
-                                <rect key="frame" x="15" y="90" width="100" height="30"/>
+                                <rect key="frame" x="15" y="90" width="150" height="30"/>
                                 <color key="backgroundColor" red="0.42745098040000001" green="0.75294117650000003" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="KiO-6y-MRw"/>
+                                    <constraint firstAttribute="width" constant="150" id="KiO-6y-MRw"/>
                                     <constraint firstAttribute="height" constant="30" id="yRx-pU-vuC"/>
                                 </constraints>
-                                <state key="normal" title="请求3">
+                                <state key="normal" title="Multipart Request1">
                                     <color key="titleColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="action3BtnClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jF8-hU-ljV"/>
+                                    <action selector="action1BtnClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Q8G-f3-WXV"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8gh-ed-qBP">
+                                <rect key="frame" x="15" y="135" width="150" height="30"/>
+                                <color key="backgroundColor" red="0.0" green="1" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="Sst-lg-d8t"/>
+                                    <constraint firstAttribute="width" constant="150" id="qn4-Ig-qsJ"/>
+                                </constraints>
+                                <state key="normal" title="Multipart Request2">
+                                    <color key="titleColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="action2BtnClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DXq-Sv-DSK"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AB6-l1-G0o">
+                                <rect key="frame" x="15" y="180" width="150" height="30"/>
+                                <color key="backgroundColor" red="1" green="0.80000001190000003" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="UT8-db-pK4"/>
+                                    <constraint firstAttribute="width" constant="150" id="ljb-XQ-X4j"/>
+                                </constraints>
+                                <state key="normal" title="GET Request1">
+                                    <color key="titleColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="action3BtnClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="C1m-cn-OEA"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Me-oq-WyP">
+                                <rect key="frame" x="15" y="270" width="150" height="30"/>
+                                <color key="backgroundColor" red="0.61568629740000003" green="0.76862746479999999" blue="0.31764706970000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="0lJ-Vm-0ot"/>
+                                    <constraint firstAttribute="height" constant="30" id="GnD-Ey-ZZT"/>
+                                </constraints>
+                                <state key="normal" title="POST Request">
+                                    <color key="titleColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="action4BtnClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="BCK-tA-4NK"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zAk-Jq-hXT">
+                                <rect key="frame" x="15" y="225" width="150" height="30"/>
+                                <color key="backgroundColor" red="0.42745098040000001" green="0.75294117650000003" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="hQR-Xv-KKN"/>
+                                    <constraint firstAttribute="width" constant="150" id="oCT-Op-FX2"/>
+                                </constraints>
+                                <state key="normal" title="GET Request2">
+                                    <color key="titleColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="action31BtnClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="i1k-w8-X7U"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l1b-gj-JpT">
+                                <rect key="frame" x="15" y="315" width="150" height="30"/>
+                                <color key="backgroundColor" red="0.40000000600000002" green="1" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="1db-0c-1oI"/>
+                                    <constraint firstAttribute="height" constant="30" id="Axo-hz-QKP"/>
+                                </constraints>
+                                <state key="normal" title="Download Request">
+                                    <color key="titleColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="action5BtnClick:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XKo-n7-shy"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="0.94117647410000005" green="0.94117647410000005" blue="0.94117647410000005" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="4Me-oq-WyP" firstAttribute="top" secondItem="zAk-Jq-hXT" secondAttribute="bottom" constant="15" id="3gp-E5-oIV"/>
+                            <constraint firstItem="l1b-gj-JpT" firstAttribute="top" secondItem="4Me-oq-WyP" secondAttribute="bottom" constant="15" id="Dek-hc-ZpY"/>
+                            <constraint firstItem="zAk-Jq-hXT" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="15" id="FXl-uy-DSH"/>
+                            <constraint firstItem="l1b-gj-JpT" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="15" id="Lye-sC-Ise"/>
+                            <constraint firstItem="8gh-ed-qBP" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="15" id="PnA-O1-Z8o"/>
+                            <constraint firstItem="AB6-l1-G0o" firstAttribute="top" secondItem="8gh-ed-qBP" secondAttribute="bottom" constant="15" id="SlZ-ZU-cV5"/>
+                            <constraint firstItem="zAk-Jq-hXT" firstAttribute="top" secondItem="AB6-l1-G0o" secondAttribute="bottom" constant="15" id="UGh-g8-z87"/>
+                            <constraint firstItem="8gh-ed-qBP" firstAttribute="top" secondItem="RjO-a3-I4v" secondAttribute="bottom" constant="15" id="WPN-eK-ISM"/>
                             <constraint firstItem="RjO-a3-I4v" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="70" id="YeY-7D-hSt"/>
+                            <constraint firstItem="AB6-l1-G0o" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="15" id="ffz-wU-fkR"/>
+                            <constraint firstItem="4Me-oq-WyP" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="15" id="rXZ-o6-0GI"/>
                             <constraint firstItem="RjO-a3-I4v" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="15" id="uVH-UF-2En"/>
                         </constraints>
                     </view>

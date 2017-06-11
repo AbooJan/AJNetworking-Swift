@@ -11,8 +11,9 @@ import UIKit
 import Alamofire
 
 enum TestRequest {
-    case login(account:String, pw:String)
-    case news(id:String, time:String)
+    case login(phone:String, pw:String)
+    case friends(userID:Int64)
+    case user(userID:Int64)
 }
 
 extension TestRequest:AJRequestBody {
@@ -22,25 +23,43 @@ extension TestRequest:AJRequestBody {
         case .login:
             return "login";
             
-        case .news:
-            return "news";
+        case .friends:
+            return "friends";
+            
+        case .user:
+            return "user";
         }
     }
     
     var params:[String:Any]? {
         switch self {
-        case .login(let account, let pw):
-            return ["account":account, "pw":pw];
+        case .login(let phone, let pw):
+            return ["phone":phone, "pw":pw];
             
-        case .news(let id, let time):
-            return ["userId":id, "dateTime":time];
+        case .friends(let userID):
+            return ["userID":userID];
             
+        case .user(let userID):
+            return ["userID":userID];
+        }
+    }
+    
+    var method:HttpMethod {
+        switch self {
+        case .login:
+            return .post;
+            
+        case .friends:
+            return .get;
+            
+        case .user:
+            return .get;
         }
     }
     
     
     func isSuccess(_ code: String) -> Bool {
-        if code == "1" {
+        if code == "111" {
             return true;
         }
         
@@ -48,13 +67,16 @@ extension TestRequest:AJRequestBody {
     }
     
     var timeout:TimeInterval {
-        return 10.0;
+        return 15.0;
     }
 }
 
 //MARK:---
 enum MultipartTestRequest {
+    /// upload with fileData
     case uploadAvatar(avatar:UIImage)
+    /// upload with fileUrl
+    case uploadLogo(logo:URL)
 }
 
 extension MultipartTestRequest:AJRequestBody {
@@ -78,11 +100,17 @@ extension MultipartTestRequest:AJRequestBody {
             let param:AJFormData = AJFormData(data: data, name: "phone", mimeType: nil);
             
             return [formData, param];
+            
+            
+        case .uploadLogo(let logo):
+            
+            let formData:AJFormData = AJFormData(fileUrl:logo, name: "avatar", mimeType:"image/jpeg");
+            
+            let data:Data = "18090939282".data(using: .utf8)!;
+            let param:AJFormData = AJFormData(data: data, name: "phone", mimeType: nil);
+            
+            return [formData, param];
         }
-    }
-    
-    var method:HttpMethod {
-        return .post;
     }
     
     var headers:[String:String]? {
@@ -96,8 +124,5 @@ extension MultipartTestRequest:AJRequestBody {
         
         return false;
     }
-    
-    var timeout:TimeInterval {
-        return 20.0;
-    }
+
 }

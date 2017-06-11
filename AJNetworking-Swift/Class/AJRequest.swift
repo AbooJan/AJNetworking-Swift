@@ -111,16 +111,12 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
                                          success:@escaping RequestSuccessHandler,
                                          fail:@escaping RequestFailHandler) {
         
-        //timeout
-        let config = URLSessionConfiguration.default;
-        config.timeoutIntervalForRequest = body.timeout;
-        config.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+        //TODO:---timeout
         
-        let manager = SessionManager(configuration: config);
         
         let convertParams = self.convertParams(withBody: body);
         
-        let _ = manager.request(convertParams.path, method: convertParams.method, parameters: body.params, encoding: convertParams.encoding, headers: body.headers).responseString { (response:DataResponse<String>) in
+        let _ = Alamofire.request(convertParams.path, method: convertParams.method, parameters: body.params, encoding: convertParams.encoding, headers: body.headers).responseString { (response:DataResponse<String>) in
             
             // dismiss hub
             if body.hub != nil {
