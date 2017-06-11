@@ -11,6 +11,10 @@ import Alamofire
 
 // MARK: -
 
+typealias RequestSuccessHandler = ((_ jsonStr:String) -> Void)
+typealias RequestFailHandler = ((_ err:Error) -> Void)
+
+// MARK: -
 
 /// Network Request Service
 ///     - S:Request Body
@@ -35,9 +39,7 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
             return;
         }
         
-        let requestPath:String = packagePath(withRequestBody: requestbody);
-        let encoding:ParameterEncoding = convertEncoding(withRequestBody: requestbody);
-        let method:HTTPMethod = HTTPMethod(rawValue: requestbody.method.rawValue)!;
+        let requestPath:String = self.packagePath(withRequestBody: requestbody);
         
         // Log
         print("\n****** REQUEST ******");
@@ -50,19 +52,10 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
         if requestbody.hub != nil {
             AJNetworkConfig.shareInstance.hubHanlder?.showHub(tips: requestbody.hub);
         }
-        
-        
-        //timeout
-        let config = URLSessionConfiguration.default;
-        config.timeoutIntervalForRequest = requestbody.timeout;
-        config.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
-        
-        let manager = SessionManager(configuration: config);
-        
-        
+    
         
         // handle failure closure
-        let handleFailure = { (err:Error) in
+        let handleFailure:RequestFailHandler = { (err:Error) in
             
             //callback
             let nsErr = err as NSError;
@@ -79,7 +72,7 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
         }
         
         // handle success closure
-        let handleSuccess = { (jsonStr:String) in
+        let handleSuccess:RequestSuccessHandler = { (jsonStr:String) in
             //Log
             print("\n###### RESPONSE ######");
             print("#SOURCE#: \(requestPath)")
@@ -102,67 +95,116 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
             }
         }
         
-        
-        if let multipart = requestbody.multipartFormData {
-            
-            Alamofire.upload(multipartFormData: { (formData) in
-                
-                // append form data
-                for form in multipart {
-                    
-                    if let mimeType = form.mimeType {
-                        formData.append(form.data, withName: form.name, fileName: form.fileName(), mimeType: mimeType);
-                    }else{
-                        formData.append(form.data, withName: form.name);
-                    }
-                }
-        
-            }, to: requestPath, method: method, headers: requestbody.headers, encodingCompletion: { (result:SessionManager.MultipartFormDataEncodingResult) in
-                
-                // dismiss hub
-                if requestbody.hub != nil {
-                    AJNetworkConfig.shareInstance.hubHanlder?.dismissHub();
-                }
-
-                switch result {
-                case .success(let request, _, _):
-                    request.responseString(completionHandler: { (res:DataResponse<String>) in
-                        switch res.result {
-                        case .success(let jsonStr):
-                            handleSuccess(jsonStr);
-                            
-                        case .failure(let err):
-                            handleFailure(err);
-                        }
-                    })
-                    
-                case .failure(let err):
-                    handleFailure(err);
-                }
-            });
+        // filter request
+        if let _ = requestbody.multipartFormData {
+            self.upload(withBody: requestbody, success: handleSuccess, fail: handleFailure);
             
         }else{
-            
-            let _ = manager.request(requestPath, method: method, parameters: requestbody.params, encoding: encoding, headers: requestbody.headers).responseString { (response:DataResponse<String>) in
-                
-                // dismiss hub
-                if requestbody.hub != nil {
-                    AJNetworkConfig.shareInstance.hubHanlder?.dismissHub();
-                }
-                
-                switch response.result {
-                case .success(let jsonStr):
-                    handleSuccess(jsonStr);
-                    
-                case .failure(let err):
-                    handleFailure(err);
-                }
-            }
+            self.commonRequest(withBody: requestbody, success: handleSuccess, fail: handleFailure);
         }
     }
     
     
     // MARK: - Private
+    
+    fileprivate class func commonRequest(withBody body:S,
+                                         success:@escaping RequestSuccessHandler,
+                                         fail:@escaping RequestFailHandler) {
+        
+        //timeout
+        let config = URLSessionConfiguration.default;
+        config.timeoutIntervalForRequest = body.timeout;
+        config.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+        
+        let manager = SessionManager(configuration: config);
+        
+        let convertParams = self.convertParams(withBody: body);
+        
+        let _ = manager.request(convertParams.path, method: convertParams.method, parameters: body.params, encoding: convertParams.encoding, headers: body.headers).responseString { (response:DataResponse<String>) in
+            
+            // dismiss hub
+            if body.hub != nil {
+                AJNetworkConfig.shareInstance.hubHanlder?.dismissHub();
+            }
+            
+            switch response.result {
+            case .success(let jsonStr):
+                success(jsonStr);
+                
+            case .failure(let err):
+                fail(err);
+            }
+        }
+    }
+    
+    fileprivate class func upload(withBody body:S,
+                                  success:@escaping RequestSuccessHandler,
+                                  fail:@escaping RequestFailHandler) {
+        
+        let multipart = body.multipartFormData!;
+        let convertParams = self.convertParams(withBody: body);
+        
+        Alamofire.upload(multipartFormData: { (formData) in
+            
+            // append form data
+            for form in multipart {
+                
+                if let mimeType = form.mimeType {
+                    
+                    if let data = form.data {
+                        formData.append(data, withName: form.name, fileName: form.fileName(), mimeType: mimeType);
+                    }else if let url = form.fileUrl {
+                        formData.append(url, withName: form.name, fileName: form.fileName(), mimeType: mimeType);
+                    }else {
+                        assert(false, "there is no multipartFormData");
+                    }
+                    
+                }else{
+                    if let data = form.data {
+                        formData.append(data, withName: form.name);
+                    }else if let url = form.fileUrl {
+                        formData.append(url, withName: form.name);
+                    }else {
+                        assert(false, "there is no multipartFormData");
+                    }
+                }
+            }
+            
+        }, to: convertParams.path, headers: body.headers, encodingCompletion: { (result:SessionManager.MultipartFormDataEncodingResult) in
+            
+            // dismiss hub
+            if body.hub != nil {
+                AJNetworkConfig.shareInstance.hubHanlder?.dismissHub();
+            }
+            
+            switch result {
+            case .success(let request, _, _):
+                request.responseString(completionHandler: { (res:DataResponse<String>) in
+                    switch res.result {
+                    case .success(let jsonStr):
+                        success(jsonStr);
+                        
+                    case .failure(let err):
+                        fail(err);
+                    }
+                });
+                
+            case .failure(let err):
+                fail(err);
+            }
+        });
+        
+    }
+    
+    //MARK: utils
+    fileprivate class func convertParams(withBody body:S) -> (path:String, encoding:ParameterEncoding, method:HTTPMethod) {
+        let requestPath:String = packagePath(withRequestBody: body);
+        let encoding:ParameterEncoding = convertEncoding(withRequestBody: body);
+        let method:HTTPMethod = HTTPMethod(rawValue: body.method.rawValue)!;
+        
+        return (requestPath, encoding, method);
+    }
+    
     fileprivate class func packagePath(withRequestBody body:S) -> String {
         
         assert(body.host.isEmpty == false, "please config network request host first at class `AJNetworkConfig`");

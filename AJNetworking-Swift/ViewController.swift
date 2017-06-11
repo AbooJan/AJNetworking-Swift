@@ -17,18 +17,9 @@ class ViewController: UIViewController {
         test3();
     }
     
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//        test2();
-//        test1();
-//        test3();
     }
-    
-    
-    
     
     func test3() {
         
@@ -37,7 +28,6 @@ class ViewController: UIViewController {
                 print(res ?? "");
             }
         }
-
     }
     
     func test2() {
@@ -78,7 +68,6 @@ class ViewController: UIViewController {
 }
 
 // MARK: -
-
 
 class LoginResponseBean:AJBaseBean {
     var userId:String?

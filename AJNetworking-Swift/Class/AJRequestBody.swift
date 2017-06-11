@@ -9,26 +9,6 @@
 import Foundation
 import Alamofire
 
-//MARK: -
-public struct FormData {
-    var data:Data;
-    var name:String;
-    
-    ///noly file need mime type
-    var mimeType:String?;
-    
-    func fileName() -> String {
-        if let tmp = mimeType?.components(separatedBy: "/") {
-            if tmp.count == 2 {
-                if let fileType = tmp.last {
-                    return name+".\(fileType)";
-                }
-            }
-        }
-        
-        return name;
-    }
-}
 
 // MARK: - Enum
 public enum HttpMethod:String {
@@ -79,7 +59,7 @@ public protocol AJRequestBody {
     var serializationType:HttpRequestSerialization {get};
     
     /// multipart form data request
-    var multipartFormData:[FormData]? {get};
+    var multipartFormData:[AJFormData]? {get};
     
     /// the progress tips show when network request start, nil will not show
     var hub:String? {get};
@@ -118,7 +98,7 @@ extension AJRequestBody {
         return .form;
     }
     
-    var multipartFormData:[FormData]? {
+    var multipartFormData:[AJFormData]? {
         return nil;
     }
     

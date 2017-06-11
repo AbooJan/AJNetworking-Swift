@@ -67,15 +67,15 @@ extension MultipartTestRequest:AJRequestBody {
         return [:];
     }
  
-    var multipartFormData:[FormData]? {
+    var multipartFormData:[AJFormData]? {
         
         switch self {
         case .uploadAvatar(let avatar):
             
-            let formData:FormData = FormData(data: UIImageJPEGRepresentation(avatar, 0.6)!, name: "avatar", mimeType:"image/jpeg");
+            let formData:AJFormData = AJFormData(data: UIImageJPEGRepresentation(avatar, 0.6)!, name: "avatar", mimeType:"image/jpeg");
             
             let data:Data = "18090939282".data(using: .utf8)!;
-            let param:FormData = FormData(data: data, name: "phone", mimeType: nil);
+            let param:AJFormData = AJFormData(data: data, name: "phone", mimeType: nil);
             
             return [formData, param];
         }
