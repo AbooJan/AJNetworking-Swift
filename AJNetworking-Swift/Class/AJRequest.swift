@@ -9,19 +9,48 @@
 import UIKit
 import Alamofire
 
-// MARK: -
 
 typealias RequestSuccessHandler = ((_ jsonStr:String) -> Void)
 typealias RequestFailHandler = ((_ err:Error) -> Void)
 
-// MARK: -
 
+public protocol RequestProgressProtocol {
+    func request(_ request: DataRequest, progress: Progress);
+}
+
+
+//MARK: -
+fileprivate class AJRequestManager: NSObject {
+    
+    fileprivate var manager:SessionManager? = nil;
+    
+    fileprivate class func shareInstance() -> AJRequestManager {
+        return Static.shared;
+    }
+    
+    fileprivate func setupManager(withBody body:AJRequestBody) {
+        
+        let config = URLSessionConfiguration.default;
+        config.timeoutIntervalForRequest = body.timeout;
+        config.timeoutIntervalForResource = body.timeout;
+        config.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders;
+        
+        self.manager = SessionManager(configuration:config);
+    }
+    
+
+    private struct Static {
+        static let shared:AJRequestManager = AJRequestManager();
+    }
+}
+
+//MARK:-
 /// Network Request Service
 ///     - S:Request Body
 ///     - E:Response Bean
 public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
     
-    // MARK: - Public
+    // MARK: Public
     
     /// send network request
     ///
@@ -30,7 +59,9 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
     ///   - callback: network reqeust callback info
     ///   - responseModel: network request return data model
     ///   - err: network request fail error info
-    public class func sendRequest(_ requestbody:S, callback:@escaping (_ responseModel:E?, _ err:AJError?) -> Void) {
+    public class func sendRequest(_ requestbody:S,
+                                  progressDelegate:RequestProgressProtocol? = nil,
+                                  callback:@escaping (_ responseModel:E?, _ err:AJError?) -> Void) {
         
         // network check
         guard AJNetworkStatus.shareInstance.canReachable() else {
@@ -53,6 +84,7 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
             AJNetworkConfig.shareInstance.hubHanlder?.showHub(tips: requestbody.hub);
         }
     
+        
         
         // handle failure closure
         let handleFailure:RequestFailHandler = { (err:Error) in
@@ -95,9 +127,12 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
             }
         }
         
+        // init manager
+        AJRequestManager.shareInstance().setupManager(withBody: requestbody);
+        
         // filter request
         if let _ = requestbody.multipartFormData {
-            self.upload(withBody: requestbody, success: handleSuccess, fail: handleFailure);
+            self.upload(withBody: requestbody, progressDelegate: progressDelegate, success: handleSuccess, fail: handleFailure);
             
         }else{
             self.commonRequest(withBody: requestbody, success: handleSuccess, fail: handleFailure);
@@ -105,18 +140,15 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
     }
     
     
-    // MARK: - Private
+    // MARK: Private
     
     fileprivate class func commonRequest(withBody body:S,
                                          success:@escaping RequestSuccessHandler,
                                          fail:@escaping RequestFailHandler) {
         
-        //TODO:---timeout
-        
-        
         let convertParams = self.convertParams(withBody: body);
         
-        let _ = Alamofire.request(convertParams.path, method: convertParams.method, parameters: body.params, encoding: convertParams.encoding, headers: body.headers).responseString { (response:DataResponse<String>) in
+        let _ = AJRequestManager.shareInstance().manager?.request(convertParams.path, method: convertParams.method, parameters: body.params, encoding: convertParams.encoding, headers: body.headers).responseString { (response:DataResponse<String>) in
             
             // dismiss hub
             if body.hub != nil {
@@ -134,13 +166,14 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
     }
     
     fileprivate class func upload(withBody body:S,
+                                  progressDelegate:RequestProgressProtocol? = nil,
                                   success:@escaping RequestSuccessHandler,
                                   fail:@escaping RequestFailHandler) {
         
         let multipart = body.multipartFormData!;
         let convertParams = self.convertParams(withBody: body);
         
-        Alamofire.upload(multipartFormData: { (formData) in
+        AJRequestManager.shareInstance().manager?.upload(multipartFormData: { (formData) in
             
             // append form data
             for form in multipart {
@@ -184,6 +217,7 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
                         fail(err);
                     }
                 });
+                progressDelegate?.request(request, progress: request.uploadProgress);
                 
             case .failure(let err):
                 fail(err);

@@ -82,7 +82,7 @@ enum MultipartTestRequest {
 extension MultipartTestRequest:AJRequestBody {
     
     var apiPath:String {
-        return "test/uploadAvatar"
+        return "uploadAvatar"
     }
     
     var params:[String:Any]? {
@@ -115,6 +115,10 @@ extension MultipartTestRequest:AJRequestBody {
     
     var headers:[String:String]? {
         return ["Content-Type":"multipart/form-data"];
+    }
+    
+    var timeout: TimeInterval {
+        return 20.0;
     }
     
     func isSuccess(_ code: String) -> Bool {

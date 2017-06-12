@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, RequestProgressProtocol {
     
     
     @IBAction func action1BtnClick(_ sender: Any) {
@@ -41,11 +41,12 @@ class ViewController: UIViewController {
     //MARK:-
     override func viewDidLoad() {
         super.viewDidLoad()
+        
     }
     
     func multipartRequest1() {
         
-        AJRequest<MultipartTestRequest, AJBaseCommonResponseBean<AJBaseBean>>.sendRequest(.uploadAvatar(avatar: #imageLiteral(resourceName: "test"))) { (res, err) in
+        AJRequest<MultipartTestRequest, AJBaseCommonResponseBean<AJBaseBean>>.sendRequest(.uploadAvatar(avatar: #imageLiteral(resourceName: "test")), progressDelegate: self) { (res, err) in
             if err == nil {
                 print("🤖:"+(res?.toJSONString() ?? ""));
             }
@@ -56,7 +57,7 @@ class ViewController: UIViewController {
         let path:String = Bundle.main.path(forResource: "logo", ofType: ".jpeg")!;
         let fileUrl:URL = URL(fileURLWithPath: path);
         
-        AJRequest<MultipartTestRequest, AJBaseCommonResponseBean<AJBaseBean>>.sendRequest(.uploadLogo(logo: fileUrl)) { (res, err) in
+        AJRequest<MultipartTestRequest, AJBaseCommonResponseBean<AJBaseBean>>.sendRequest(.uploadLogo(logo: fileUrl), progressDelegate: self) { (res, err) in
             if err == nil {
                 print("🤖:"+(res?.toJSONString() ?? ""));
             }
@@ -92,6 +93,12 @@ class ViewController: UIViewController {
     
     func downRequest() {
         //TODO:--
+    }
+    
+    //MARK:- 
+    func request(_ request: DataRequest, progress: Progress) {
+        let tmp = Double(progress.completedUnitCount)/Double(progress.totalUnitCount);
+        print("progress: \(tmp)")
     }
 }
 
