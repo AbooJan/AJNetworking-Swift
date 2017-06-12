@@ -2,6 +2,9 @@
 A Network Framework basic on Alamofire and HandyJSON.
 Swift version is `3.1`.
 
+
+* ApiTest:https://github.com/AbooJan/BeegoDemo
+
 ---
 ## Usage
 
