@@ -58,8 +58,11 @@ public protocol AJRequestBody {
     /// network request serialization type, default is form
     var serializationType:HttpRequestSerialization {get};
     
-    /// multipart form data request
+    /// multipart form data request specified
     var multipartFormData:[AJFormData]? {get};
+    
+    /// download file specified
+    var downloadFileDestination:(filePath:String, fileName:String)? {get};
     
     /// the progress tips show when network request start, nil will not show
     var hub:String? {get};
@@ -99,6 +102,10 @@ extension AJRequestBody {
     }
     
     var multipartFormData:[AJFormData]? {
+        return nil;
+    }
+    
+    var downloadFileDestination:(filePath:String, fileName:String)? {
         return nil;
     }
     

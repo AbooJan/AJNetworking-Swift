@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 
 
-class ViewController: UIViewController, RequestProgressProtocol {
+class ViewController: UIViewController {
     
     
     @IBAction func action1BtnClick(_ sender: Any) {
@@ -46,49 +46,71 @@ class ViewController: UIViewController, RequestProgressProtocol {
     
     func multipartRequest1() {
         
-        AJRequest<MultipartTestRequest, AJBaseCommonResponseBean<AJBaseBean>>.sendRequest(.uploadAvatar(avatar: #imageLiteral(resourceName: "test")), progressDelegate: self) { (res, err) in
+        AJRequest<MultipartTestRequest, AJBaseCommonResponseBean<AJBaseBean>>.sendRequest(.uploadAvatar(avatar: #imageLiteral(resourceName: "test")), callback: { (res:AJBaseCommonResponseBean<AJBaseBean>?, fileUrl:URL?, err:AJError?) in
+            
             if err == nil {
                 print("🤖:"+(res?.toJSONString() ?? ""));
+                print("#file#: \(fileUrl?.absoluteString ?? "")");
             }
+            
+        }) { (progress:Progress) in
+            
+            let percent:Double = Double(progress.completedUnitCount)/Double(progress.totalUnitCount);
+            print("\(#line)-#progress#: \(percent)");
         }
+        
     }
     
     func multipartRequest2() {
         let path:String = Bundle.main.path(forResource: "logo", ofType: ".jpeg")!;
         let fileUrl:URL = URL(fileURLWithPath: path);
         
-        AJRequest<MultipartTestRequest, AJBaseCommonResponseBean<AJBaseBean>>.sendRequest(.uploadLogo(logo: fileUrl), progressDelegate: self) { (res, err) in
+        AJRequest<MultipartTestRequest, AJBaseCommonResponseBean<AJBaseBean>>.sendRequest(.uploadLogo(logo: fileUrl), callback: { (res, fileUrl, err) in
+            
             if err == nil {
                 print("🤖:"+(res?.toJSONString() ?? ""));
+                print("#file#: \(fileUrl?.absoluteString ?? "")");
             }
+            
+        }) { (pg:Progress) in
+            
+            let percent:Double = Double(pg.completedUnitCount)/Double(pg.totalUnitCount);
+            print("\(#line)-#progress#: \(percent)");
         }
+        
     }
     
     func getRequest1() {
-        AJRequest<TestRequest, AJBaseCommonResponseBean<UserBean>>.sendRequest(.user(userID: 123456789)) { (res, err) in
+        
+        AJRequest<TestRequest, AJBaseCommonResponseBean<UserBean>>.sendRequest(.user(userID: 123456789), callback: {(res, _, err) in
             
             if err == nil {
                 print("🤖:"+(res?.toJSONString() ?? ""));
             }
-        }
+        });
     }
     
     func getRequest2() {
-        AJRequest<TestRequest, AJBaseListResponseBean<UserBean>>.sendRequest(.friends(userID: 987654321)) { (res:AJBaseListResponseBean<UserBean>?, err:AJError?) in
+        
+        AJRequest<TestRequest, AJBaseListResponseBean<UserBean>>.sendRequest(.friends(userID: 8384783783), callback: { (res, _, err) in
             
             if err == nil {
                 print("🤖:"+(res?.toJSONString() ?? ""));
             }
-        }
+            
+        });
+        
     }
     
     func postRequest() {
-        AJRequest<TestRequest, AJBaseCommonResponseBean<UserBean>>.sendRequest(.login(phone: "13899896929", pw: "666666")) { (res, err) in
+        
+        AJRequest<TestRequest, AJBaseCommonResponseBean<UserBean>>.sendRequest(.login(phone: "13899896929", pw: "666666"), callback:{ (res, _, err) in
             
             if err == nil {
                 print("🤖:"+(res?.toJSONString() ?? ""));
             }
-        }
+            
+        });
     }
     
     func downRequest() {

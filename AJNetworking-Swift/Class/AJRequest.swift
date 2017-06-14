@@ -10,13 +10,8 @@ import UIKit
 import Alamofire
 
 
-typealias RequestSuccessHandler = ((_ jsonStr:String) -> Void)
-typealias RequestFailHandler = ((_ err:Error) -> Void)
-
-
-public protocol RequestProgressProtocol {
-    func request(_ request: DataRequest, progress: Progress);
-}
+fileprivate typealias RequestSuccessHandler = ((_ jsonStr:String, _ fileUrl:URL?) -> Void);
+fileprivate typealias RequestFailHandler = ((_ err:Error) -> Void);
 
 
 //MARK: -
@@ -52,21 +47,23 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
     
     // MARK: Public
     
+    public typealias RequestCallback = ((_ responseModel:E?, _ fileUrl:URL?, _ err:AJError? ) -> Void);
+    public typealias ProgressCallback = ((_ progress:Progress) -> Void);
+    
     /// send network request
     ///
     /// - Parameters:
     ///   - requestbody: network request body, it contain request requirement params
     ///   - callback: network reqeust callback info
-    ///   - responseModel: network request return data model
-    ///   - err: network request fail error info
+    ///   - progress: upload or download request will callback progress
     public class func sendRequest(_ requestbody:S,
-                                  progressDelegate:RequestProgressProtocol? = nil,
-                                  callback:@escaping (_ responseModel:E?, _ err:AJError?) -> Void) {
+                                  callback:@escaping RequestCallback,
+                                  progress:ProgressCallback? = nil ) {
         
         // network check
         guard AJNetworkStatus.shareInstance.canReachable() else {
             let err = AJError(code: -6666, msg: "network is disconnected")
-            callback(nil, err);
+            callback(nil, nil, err);
             return;
         }
         
@@ -100,11 +97,11 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
             print("#error#: \(errInfo)");
             print("‼️‼️‼️‼️‼️‼️\n\n");
             
-            callback(nil, ajErr);
+            callback(nil, nil, ajErr);
         }
         
         // handle success closure
-        let handleSuccess:RequestSuccessHandler = { (jsonStr:String) in
+        let handleSuccess:RequestSuccessHandler = { (jsonStr:String, fileUrl:URL?) in
             //Log
             print("\n###### RESPONSE ######");
             print("#SOURCE#: \(requestPath)")
@@ -115,15 +112,23 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
             if let model = E.deserialize(from: jsonStr) {
                 
                 if requestbody.isSuccess(model.code) {
-                    callback(model, nil);
+                    callback(model, fileUrl, nil);
                     
                 }else{
-                    callback(model, AJError(code: Int(model.code)!, msg: model.msg));
+                    callback(model, nil, AJError(code: Int(model.code)!, msg: model.msg));
                 }
                 
             }else{
-                let ajErr = AJError(code: -9090, msg: "json deserialize to model fail" );
-                callback(nil, ajErr);
+                
+                // download file will return nothing json
+                if fileUrl != nil {
+                    callback(nil, fileUrl, nil);
+                    
+                }else {
+                    
+                    let ajErr = AJError(code: -9090, msg: "json deserialize to model fail" );
+                    callback(nil, nil, ajErr);
+                }
             }
         }
         
@@ -132,10 +137,21 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
         
         // filter request
         if let _ = requestbody.multipartFormData {
-            self.upload(withBody: requestbody, progressDelegate: progressDelegate, success: handleSuccess, fail: handleFailure);
+            self.upload(withBody: requestbody,
+                        progress: progress,
+                        success: handleSuccess,
+                        fail: handleFailure);
+            
+        }else if let _ = requestbody.downloadFileDestination {
+            self.download(withBody: requestbody,
+                          progress: progress,
+                          success: handleSuccess,
+                          fail: handleFailure);
             
         }else{
-            self.commonRequest(withBody: requestbody, success: handleSuccess, fail: handleFailure);
+            self.commonRequest(withBody: requestbody,
+                               success: handleSuccess,
+                               fail: handleFailure);
         }
     }
     
@@ -157,7 +173,7 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
             
             switch response.result {
             case .success(let jsonStr):
-                success(jsonStr);
+                success(jsonStr, nil);
                 
             case .failure(let err):
                 fail(err);
@@ -166,7 +182,7 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
     }
     
     fileprivate class func upload(withBody body:S,
-                                  progressDelegate:RequestProgressProtocol? = nil,
+                                  progress:ProgressCallback? = nil,
                                   success:@escaping RequestSuccessHandler,
                                   fail:@escaping RequestFailHandler) {
         
@@ -207,23 +223,60 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
             }
             
             switch result {
-            case .success(let request, _, _):
+            case .success(let request, _, let fileUrl):
                 request.responseString(completionHandler: { (res:DataResponse<String>) in
                     switch res.result {
                     case .success(let jsonStr):
-                        success(jsonStr);
+                        success(jsonStr, fileUrl);
                         
                     case .failure(let err):
                         fail(err);
                     }
                 });
-                progressDelegate?.request(request, progress: request.uploadProgress);
+                request.uploadProgress(closure: { (pg:Progress) in
+                    progress?(pg);
+                });
                 
             case .failure(let err):
                 fail(err);
             }
         });
         
+    }
+    
+    fileprivate class func download(withBody body:S,
+                                    progress:ProgressCallback? = nil,
+                                    success:@escaping RequestSuccessHandler,
+                                    fail:@escaping RequestFailHandler) {
+        
+        let convertParams = self.convertParams(withBody: body);
+        
+        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
+            
+            let doc:URL = URL(fileURLWithPath: body.downloadFileDestination!.filePath);
+            let fileURL = doc.appendingPathComponent(body.downloadFileDestination!.fileName);
+            
+            return (fileURL, [.removePreviousFile, .createIntermediateDirectories]);
+        }
+        
+        AJRequestManager.shareInstance().manager?.download(convertParams.path,
+                                                           method: convertParams.method,
+                                                           parameters: body.params,
+                                                           encoding: convertParams.encoding,
+                                                           headers: body.headers,
+                                                           to:destination)
+            .responseString(completionHandler: { (res:DownloadResponse<String>) in
+                switch res.result {
+                case .success(let json):
+                    success(json, res.destinationURL);
+                    
+                case .failure(let err):
+                    fail(err);
+                };
+                
+            }).downloadProgress(closure: { (pg:Progress) in
+                progress?(pg);
+            })
     }
     
     //MARK: utils
