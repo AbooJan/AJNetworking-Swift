@@ -114,14 +114,19 @@ class ViewController: UIViewController {
     }
     
     func downRequest() {
-        //TODO:--
+        AJRequest<DownRequesst, AJBaseResponseBean>.sendRequest(.avatar(userId: "1928373839"), callback: { (res, fileUrl, err) in
+            
+            if err == nil {
+                print("#DOWN-FINISH#: \(fileUrl)");
+            }
+            
+        }) { (progress:Progress) in
+            
+            let percent = Double(progress.completedUnitCount)/Double(progress.totalUnitCount);
+            print("#DOWN#: \(percent)");
+        }
     }
-    
-    //MARK:- 
-    func request(_ request: DataRequest, progress: Progress) {
-        let tmp = Double(progress.completedUnitCount)/Double(progress.totalUnitCount);
-        print("progress: \(tmp)")
-    }
+
 }
 
 // MARK: -

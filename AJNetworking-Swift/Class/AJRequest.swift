@@ -265,14 +265,12 @@ public class AJRequest<S:AJRequestBody, E:AJBaseResponseBean>: NSObject {
                                                            encoding: convertParams.encoding,
                                                            headers: body.headers,
                                                            to:destination)
-            .responseString(completionHandler: { (res:DownloadResponse<String>) in
-                switch res.result {
-                case .success(let json):
-                    success(json, res.destinationURL);
-                    
-                case .failure(let err):
-                    fail(err);
-                };
+            .response(completionHandler: { (res:DefaultDownloadResponse) in
+                if res.error == nil {
+                    success("", res.destinationURL);
+                }else{
+                    fail(res.error!);
+                }
                 
             }).downloadProgress(closure: { (pg:Progress) in
                 progress?(pg);

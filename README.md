@@ -27,16 +27,17 @@ Firstly you need use class `AJNetworkConfig` to define some global parameters, i
 
 ### Step2
 ```
-AJRequest<TestRequest, AJBaseCommonResponseBean<LoginResponseBean>>.sendRequest(.login(account: "13622823688", pw: "666666")) { (model:AJBaseCommonResponseBean<LoginResponseBean>?, err:AJError?) in
+AJRequest<MultipartTestRequest, AJBaseCommonResponseBean<AJBaseBean>>.sendRequest(.uploadAvatar(avatar: #imageLiteral(resourceName: "test")), callback: { (res:AJBaseCommonResponseBean<AJBaseBean>?, fileUrl:URL?, err:AJError?) in
             
             if err == nil {
-                let code = model?.code;
-                let msg = model?.msg;
-                let data = model?.data;
-                let userid = data?.userId;
-                
-                print(userid);
+                print("🤖:"+(res?.toJSONString() ?? ""));
+                print("#file#: \(fileUrl?.absoluteString ?? "")");
             }
+            
+        }) { (progress:Progress) in
+            
+            let percent:Double = Double(progress.completedUnitCount)/Double(progress.totalUnitCount);
+            print("\(#line)-#progress#: \(percent)");
         }
 ```
 
@@ -64,6 +65,18 @@ inherit protocol `AJRequestBody` , and turn `multipartFormData`, here is example
             
             return [formData, param];
         }
+    }
+```
+
+### Download File Request
+inherit protocol `AJRequestBody` , and turn `downloadFileDestination`, it return a tuple which contain two params, here is example:
+```
+    var downloadFileDestination:(filePath:String, fileName:String)? {
+        
+        let doc = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let name:String = "avatar.jpeg";
+        
+        return (filePath:doc.absoluteString, fileName:name);
     }
 ```
 

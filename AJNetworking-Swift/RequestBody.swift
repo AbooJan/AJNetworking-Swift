@@ -130,3 +130,44 @@ extension MultipartTestRequest:AJRequestBody {
     }
 
 }
+
+
+//Mark:- 
+enum DownRequesst {
+    case avatar(userId:String)
+}
+
+extension DownRequesst:AJRequestBody {
+    
+    
+    var apiPath:String {
+        return "avatar"
+    }
+    
+    var params:[String:Any]? {
+        switch self {
+        case .avatar(let userId):
+            return ["userId":userId]
+        }
+    }
+    
+    var downloadFileDestination:(filePath:String, fileName:String)? {
+        
+        let doc = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let name:String = "avatar.jpeg";
+        
+        return (filePath:doc.absoluteString, fileName:name);
+    }
+    
+    var timeout: TimeInterval {
+        return 20.0;
+    }
+    
+    func isSuccess(_ code: String) -> Bool {
+        if code == "111" {
+            return true;
+        }
+        
+        return false;
+    }
+}
