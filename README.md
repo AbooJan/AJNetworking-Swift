@@ -1,6 +1,6 @@
 # AJNetworking-Swift
 A Network Framework basic on Alamofire and HandyJSON.
-Swift version is `3.1`.
+Swift version is `4.0`.
 
 
 * ApiTest:https://github.com/AbooJan/BeegoDemo

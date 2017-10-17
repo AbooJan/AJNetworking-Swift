@@ -117,7 +117,7 @@ class ViewController: UIViewController {
         AJRequest<DownRequesst, AJBaseResponseBean>.sendRequest(.avatar(userId: "1928373839"), callback: { (res, fileUrl, err) in
             
             if err == nil {
-                print("#DOWN-FINISH#: \(fileUrl)");
+                print("#DOWN-FINISH#: \(fileUrl?.absoluteString ?? "")");
             }
             
         }) { (progress:Progress) in
